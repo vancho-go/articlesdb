@@ -1,0 +1,8 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.error {
+    background-color: red;
+    color: white;  /* Дополнительно, если нужно изменить цвет текста */
+}

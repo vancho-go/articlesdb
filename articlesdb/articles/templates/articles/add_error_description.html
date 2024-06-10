@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавить описание ошибки{% endblock %}
+
+{% block content %}
+    <h1>Добавить описание ошибки для {{ article.title_rus }}</h1>
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="error_description">Описание ошибки</label>
+            <textarea name="error_description" id="error_description" class="form-control" cols="40" rows="5"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+    <a href="{% url 'article_list' %}" class="btn btn-secondary mt-3">Назад к списку</a>
+{% endblock %}
