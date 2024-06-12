@@ -6,6 +6,7 @@ from django.db.models import Q, Count
 from .forms import ArticleForm
 from .models import Article
 from django.contrib import messages
+import datetime
 
 
 @login_required
@@ -20,8 +21,7 @@ def article_list(request):
         year = form.cleaned_data.get('year')
 
         if term:
-            articles = articles.filter(
-                Q(title_rus__icontains=term) | Q(title_eng__icontains=term) | Q(term__icontains=term))
+            articles = articles.filter(Q(term=term))
         if title:
             articles = articles.filter(Q(title_rus__icontains=title) | Q(title_eng__icontains=title))
         if author:
@@ -76,15 +76,22 @@ def article_update(request, pk):
 @login_required
 def add_error_description(request, pk):
     article = get_object_or_404(Article, pk=pk)
+
+    # Проверка прав на добавление ошибки
+    if not request.user.is_superuser and article.user_ins == request.user:
+        return redirect('article_list')
+
     if request.method == 'POST':
         error_description = request.POST.get('error_description')
         if error_description:
             article.error_description = error_description
             article.user_checker = request.user
             article.resolved = False
+            article.checked_at = datetime.datetime.now()
             article.save()
             return redirect('article_list')
     return render(request, 'articles/add_error_description.html', {'article': article})
+
 
 
 @user_passes_test(lambda u: u.is_superuser)

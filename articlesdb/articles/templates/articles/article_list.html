@@ -27,7 +27,15 @@
     <ul class="list-group">
         {% for article in articles %}
             <li class="list-group-item {% if article.error_description and not article.resolved and article.user_ins == user %}list-group-item-danger{% elif article.article_idfr in duplicate_ids %}list-group-item-warning{% endif %}">
-                <a href="{% url 'article_detail' article.pk %}">{{ article.title_rus }}</a>
+                <a href="{% url 'article_detail' article.pk %}">
+                    {% if article.title_rus %}
+                        {{ article.title_rus }}
+                    {% elif article.title_eng %}
+                        {{ article.title_eng }}
+                    {% else %}
+                        Без названия
+                    {% endif %}
+                </a>
                 <div class="btn-group float-right">
                     {% if user.is_superuser %}
                         <a href="{% url 'article_update' article.pk %}" class="btn btn-primary" title="Редактировать">
@@ -41,9 +49,11 @@
                         {% endif %}
                     {% endif %}
                     {% if not article.error_description or article.resolved %}
-                        <a href="{% url 'add_error_description' article.pk %}" class="btn btn-warning" title="Добавить описание ошибки">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </a>
+                        {% if user.is_superuser or article.user_ins != user %}
+                            <a href="{% url 'add_error_description' article.pk %}" class="btn btn-warning" title="Добавить описание ошибки">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </a>
+                        {% endif %}
                     {% endif %}
                     {% if user.is_superuser %}
                         <a href="{% url 'article_delete' article.pk %}" class="btn btn-danger" title="Удалить">
