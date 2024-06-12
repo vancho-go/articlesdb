@@ -11,9 +11,6 @@ import re
 import requests
 import os
 
-# required_fields = ['publish_year', 'link', 'usage_context', 'maths', 'article_idfr', 'problems_solution', 'term', 'term_desc', 'interest']
-# python -m spacy download ru_core_news_sm
-# python -m spacy download en_core_web_sm
 
 # Установка пути для данных nltk
 nltk.data.path.append(os.path.join(os.path.dirname(__file__), 'nltk_data'))
@@ -107,6 +104,26 @@ class ArticleForm(forms.ModelForm):
         keyword_rus = cleaned_data.get('keyword_rus')
         keyword_eng = cleaned_data.get('keyword_eng')
         article_idfr = cleaned_data.get('article_idfr')
+
+        # Проверка языка для полей
+        if title_rus and not re.match(r'^[А-Яа-яЁё\s.,!?-]+$', title_rus):
+            raise ValidationError(
+                'Название статьи на русском должно содержать только кириллические символы.')
+        if title_eng and not re.match(r'^[A-Za-z\s.,!?-]+$', title_eng):
+            raise ValidationError(
+                'Название статьи на английском должно содержать только латинские символы.')
+        if author_rus and not re.match(r'^[А-Яа-яЁё\s.,!?-]+$', author_rus):
+            raise ValidationError(
+                'Имя автора на русском должно содержать только кириллические символы.')
+        if author_eng and not re.match(r'^[A-Za-z\s.,!?-]+$', author_eng):
+            raise ValidationError(
+                'Имя автора на английском должно содержать только латинские символы.')
+        if keyword_rus and not re.match(r'^[А-Яа-яЁё\s.,!?-]+$', keyword_rus):
+            raise ValidationError(
+                'Ключевое слово на русском должно содержать только кириллические символы.')
+        if keyword_eng and not re.match(r'^[A-Za-z\s.,!?-]+$', keyword_eng):
+            raise ValidationError(
+                'Ключевое слово на английском должно содержать только латинские символы.')
 
         # Лемматизация названия статьи и термина
         title_rus_lemmas = lemmatize_russian(title_rus) if title_rus else ""
