@@ -42,10 +42,12 @@ TERM_CHOICES = [
     ('Gradually introduced technology', 'Gradually introduced technology'),
 ]
 
+
 def lemmatize_russian(text):
     doc = nlp_ru(text)
     lemmas = [token.lemma_ for token in doc]
     return ' '.join(lemmas)
+
 
 def lemmatize_english(text):
     doc = nlp_en(text)
